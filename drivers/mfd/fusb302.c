@@ -898,7 +898,7 @@ static void mux_alert(struct fusb30x_chip *chip, u32 *evt)
 
 static void set_state_unattached(struct fusb30x_chip *chip)
 {
-	dev_info(chip->dev, "connection has disconnected\n");
+	/* dev_info(chip->dev, "connection has disconnected\n"); */
 
 	if (chip->notify.is_cc_connected &&
 	    CC_STATE_ROLE(chip) == CC_STATE_TOGSS_IS_ACC) {
