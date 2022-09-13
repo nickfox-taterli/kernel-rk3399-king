@@ -189,12 +189,12 @@
 		 */
 		regulator-min-microvolt = <800000>;
 		regulator-max-microvolt = <1400000>;
+		/* 加入0.3V偏置,这样电压就能达标. */
+		regulator-microvolt-offset = <300000>;
 		regulator-always-on;
 		regulator-boot-on;
-
-		/* for rockchip boot on */
-		rockchip,pwm_id= <2>;
-		rockchip,pwm_voltage = <900000>;
+		/* 加入电源树 */
+		pwm-supply = <&vcc5v0_sys>;
 	};
 
 	vccadc_ref: vccadc-ref {
