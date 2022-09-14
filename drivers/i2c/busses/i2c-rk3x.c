@@ -1075,6 +1075,7 @@ static int rk3x_i2c_xfer(struct i2c_adapter *adap,
 	u32 val;
 	int ret = 0;
 	int i;
+	int retry_cnt;
 
 	if (i2c->suspended)
 		return -EACCES;
@@ -1091,6 +1092,9 @@ static int rk3x_i2c_xfer(struct i2c_adapter *adap,
 	 * rk3x_i2c_setup()).
 	 */
 	for (i = 0; i < num; i += ret) {
+		/* RK3399的第一个I2C调用会经常失败,还是考虑重试. */
+		timeout_retry:
+
 		ret = rk3x_i2c_setup(i2c, msgs + i, num - i);
 
 		if (ret < 0) {
@@ -1111,9 +1115,6 @@ static int rk3x_i2c_xfer(struct i2c_adapter *adap,
 		spin_lock_irqsave(&i2c->lock, flags);
 
 		if (timeout == 0) {
-			dev_err(i2c->dev, "timeout, ipd: 0x%02x, state: %d\n",
-				i2c_readl(i2c, REG_IPD), i2c->state);
-
 			/* Force a STOP condition without interrupt */
 			rk3x_i2c_disable_irq(i2c);
 			val = i2c_readl(i2c, REG_CON) & REG_CON_TUNING_MASK;
@@ -1121,6 +1122,14 @@ static int rk3x_i2c_xfer(struct i2c_adapter *adap,
 			i2c_writel(i2c, val, REG_CON);
 
 			i2c->state = STATE_IDLE;
+
+			if (retry_cnt < 3){
+				retry_cnt++;
+				goto timeout_retry;
+			}
+
+			dev_err(i2c->dev, "timeout, ipd: 0x%02x, state: %d\n",
+				i2c_readl(i2c, REG_IPD), i2c->state);
 
 			ret = -ETIMEDOUT;
 			break;
