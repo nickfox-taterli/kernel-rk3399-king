@@ -72,7 +72,7 @@ static int rockchip_cpuinfo_probe(struct platform_device *pdev)
 	system_serial_low = crc32(0, buf, 8);
 	system_serial_high = crc32(system_serial_low, buf + 8, 8);
 
-	dev_info(dev, "Serial\t\t: %08x%08x\n",
+	dev_info(dev, "Serial: %08X-%08X\n",
 		 system_serial_high, system_serial_low);
 
 	return 0;
