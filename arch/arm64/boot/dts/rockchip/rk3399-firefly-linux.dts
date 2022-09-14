@@ -86,7 +86,7 @@
                         "Microphone", "Mic Jack",
                         "Headphone", "Headphone Jack";
                 simple-audio-card,routing =
-                        "Mic Jack", "MICBIAS1",
+                        "Mic Jack", "micbias1",
                         "IN1P", "Mic Jack",
                         "Headphone Jack", "HPOL",
                         "Headphone Jack", "HPOR";
@@ -175,6 +175,8 @@
 		regulator-name = "vcc_phy";
 		regulator-always-on;
 		regulator-boot-on;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
 	};
 
 	vdd_log: vdd-log {
@@ -608,21 +610,17 @@
 		pinctrl-0 = <&fusb0_int>;
 		int-n-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
 		vbus-5v-gpios = <&gpio4 26 GPIO_ACTIVE_HIGH>;
+		fusb302,role = "ROLE_MODE_DRP";
 		status = "okay";
 	};
 
-	mpu6050: mpu@68 {
-		status = "disabled";
-		compatible = "invensense,mpu6050";
-		reg = <0x68>;
-		mpu-int_config = <0x10>;
-		mpu-level_shifter = <0>;
-		mpu-orientation = <0 1 0 1 0 0 0 0 1>;
-		orientation-x= <1>;
-		orientation-y= <1>;
-		orientation-z= <1>;
-		irq-gpio = <&gpio1 4 IRQ_TYPE_LEVEL_LOW>;
-		mpu-debug = <1>;
+	mma8452: mma8452@1d {
+		compatible = "fsl,mma8452";
+		reg = <0x1d>;
+		interrupt-parent = <&gpio1>;
+		interrupts = <RK_PC7 IRQ_TYPE_EDGE_RISING>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&gsensor_int>;
 	};
 };
 
@@ -723,6 +721,12 @@
 	fusb30x {
 		fusb0_int: fusb0-int {
 			rockchip,pins = <1 2 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+	};
+
+	mma8452 {
+		gsensor_int: gsensor-int {
+			rockchip,pins = <1 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
 };
@@ -910,6 +914,7 @@
 
 &vopb {
 	status = "okay";
+	rockchip,grf = <&grf>;
 };
 
 &vopb_mmu {
@@ -918,6 +923,7 @@
 
 &vopl {
 	status = "okay";
+	rockchip,grf = <&grf>;
 };
 
 &vopl_mmu {
