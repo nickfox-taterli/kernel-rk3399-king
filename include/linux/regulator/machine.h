@@ -128,6 +128,7 @@ struct regulation_constraints {
 	/* voltage output range (inclusive) - for voltage control */
 	int min_uV;
 	int max_uV;
+	int init_uV;
 
 	/* Minimum voltage during system startup */
 	int early_min_uV;

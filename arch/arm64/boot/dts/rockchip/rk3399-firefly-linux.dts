@@ -189,8 +189,7 @@
 		 */
 		regulator-min-microvolt = <800000>;
 		regulator-max-microvolt = <1400000>;
-		/* 加入0.3V偏置,这样电压就能达标. */
-		regulator-microvolt-offset = <300000>;
+		regulator-init-microvolt = <1050000>;
 		regulator-always-on;
 		regulator-boot-on;
 		/* 加入电源树 */
