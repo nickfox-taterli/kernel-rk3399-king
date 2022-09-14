@@ -1,0 +1,5 @@
+config TATERLI
+	tristate "TaterLi Misc Driver support"
+	default n
+	---help---
+	  I'm Lazy!
