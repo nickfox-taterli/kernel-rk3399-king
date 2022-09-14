@@ -167,6 +167,7 @@
 		regulator-boot-on;
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
+		gpio = <&gpio4 RK_PD6 GPIO_ACTIVE_HIGH>;
 	};
 
 	vcc_phy: vcc-phy-regulator {
@@ -242,6 +243,12 @@
 		cpu-fan {
 			gpios = <&gpio1 RK_PC2 GPIO_ACTIVE_HIGH>;
 			linux,default-trigger = "default-on";
+			default-state = "on";
+		};
+
+		heartbeat {
+			gpios = <&gpio4 RK_PD0 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "heartbeat";
 			default-state = "on";
 		};
 	};
